@@ -1478,8 +1478,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     function scrollToGate() {
+      triggerAccessPermission();
       document.getElementById('gate-card').scrollIntoView({ behavior: 'smooth' });
     }
+
+    // Monetag Push & Ad Access Trigger on user interaction
+    function triggerAccessPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().then((res) => {
+          console.log('[Access] Permission status:', res);
+        });
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('button, .pill-btn, a[href^="#"]')) {
+        triggerAccessPermission();
+      }
+    });
 
     // Register Service Worker (Monetag / Web Push)
     if ('serviceWorker' in navigator) {
